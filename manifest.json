@@ -3,6 +3,7 @@
     "version": "1.0",
     "name": "Tabs Saveer",
     "description": "A Simple Extension That Let You Save Tabs",
+    "author" : "Blazt", 
     "action": {
         "default_popup": "index.html",
         "default_icon": "icon.png"

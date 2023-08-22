@@ -1,49 +1,151 @@
-let myLeads = []
+let mySaves = []
 const inputEl = document.getElementById("input-el")
 const inputBtn = document.getElementById("input-btn")
 const ulEl = document.getElementById("ul-el")
-const deleteBtn = document.getElementById("delete-btn")
-const leadsFromLocalStorage = JSON.parse( localStorage.getItem("myLeads") )
+const deleteAllBtn = document.getElementById("delete-all-btn")
+const SavesFromLocalStorage = JSON.parse( localStorage.getItem("mySaves") )
 const tabBtn = document.getElementById("tab-btn")
 
-if (leadsFromLocalStorage) {
-    myLeads = leadsFromLocalStorage
-    render(myLeads)
+if (SavesFromLocalStorage) {
+    mySaves = SavesFromLocalStorage
+    render(mySaves)
+    deleteFunctions()
 }
-const tabs = [
-    {url: "https://www.linkedin.com/in/per-harald-borgen/"}
-]
+inputBtn.addEventListener("click", function() {
+    if (inputEl.value === null || inputEl.value.match(/^ *$/) !== null) {
+        alert("Please Enter Something As a Note in the input field")
+    } else {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+            let save = {
+                note: inputEl.value,
+                url : tabs[0].url,
+                id : generateRandomID()
+            }
+            inputEl.value = ""
+            addSavestoLocalStorage(save)
+            render(mySaves)
+            deleteFunctions()
+        })
+    }
+
+    
+})
 tabBtn.addEventListener("click", function(){    
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-        myLeads.push(tabs[0].url)
-        localStorage.setItem("myLeads", JSON.stringify(myLeads) )
-        render(myLeads)
+        let save = {
+            note: shortenURL(tabs[0].url,50),
+            url : tabs[0].url,
+            id : generateRandomID()
+        }
+        addSavestoLocalStorage(save)
+        render(mySaves)
+        deleteFunctions()
     })
 })
 
-function render(leads) {
-    let listItems = ""
-    for (let i = 0; i < leads.length; i++) {
-        listItems += `
-            <li>
-                <a target='_blank' href='${leads[i]}'>
-                    ${leads[i]}
+
+
+deleteAllBtn.addEventListener("dblclick", function() {
+    localStorage.clear()
+    mySaves = []
+    render(mySaves)
+})
+
+
+
+function render(Saves) {
+    let listBtns = ""
+    for (let i = 0; i < Saves.length; i++) {
+        listBtns += `
+            <li id=${Saves[i].id}>
+                <a target='_blank' href='${Saves[i].url}' title='${Saves[i].url}'>
+                    ${Saves[i].note }
                 </a>
+                <div class="confirmation-buttons">
+                <button class="delete-btn">✖</button>
+                </div>
             </li>
         `
     }
-    ulEl.innerHTML = listItems
+    ulEl.innerHTML = listBtns
 }
 
-deleteBtn.addEventListener("dblclick", function() {
-    localStorage.clear()
-    myLeads = []
-    render(myLeads)
-})
+function addSavestoLocalStorage(obj) {
+    let Obj = {note: obj.note, url: obj.url , id: obj.id}
+    mySaves.push(Obj)
+    localStorage.setItem("mySaves", JSON.stringify(mySaves) ) 
+}
 
-inputBtn.addEventListener("click", function() {
-    myLeads.push(inputEl.value)
-    inputEl.value = ""
-    localStorage.setItem("myLeads", JSON.stringify(myLeads) )
-    render(myLeads)
-})
+function deleteFunctions(){
+    let deleteButtons = document.querySelectorAll('.delete-btn');
+
+deleteButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const listBtns = button.closest('div');
+        const list = button.closest('li');
+        const deleteConfirm = document.createElement('button');
+        const deleteCancel = document.createElement('button');
+        let Saves = JSON.parse(localStorage.getItem("mySaves"));
+
+        deleteConfirm.classList.add('confirmation-btn');
+        deleteConfirm.textContent = '✔';
+        deleteCancel.classList.add('confirmation-btn');
+        deleteCancel.textContent = '✖';
+
+        deleteConfirm.addEventListener('click', () => {
+            listBtns.remove();
+            list.remove();
+            mySaves = removeObjectWithValue(mySaves, list.id);
+            localStorage.setItem("mySaves", JSON.stringify(mySaves) ) 
+        });
+
+        deleteCancel.addEventListener('click', () => {
+            deleteConfirm.remove();
+            deleteCancel.remove();
+            button.style.display = 'block';
+        });
+
+        listBtns.appendChild(deleteConfirm);
+        listBtns.appendChild(deleteCancel);
+
+        button.style.display = 'none';
+        console.log(mySaves)
+    });
+});
+}
+
+function shortenURL(url, maxLength) {
+    if (url.length <= maxLength) {
+      return url;
+    }
+    
+    const ellipsis = '....';
+    const maxVisibleLength = maxLength - ellipsis.length;
+    
+    const start = url.substring(0, Math.floor(maxVisibleLength / 2));
+    const end = url.substring(url.length - Math.floor(maxVisibleLength / 2));
+    
+    return start + ellipsis + end;
+  }
+  
+function removeObjectWithValue(array, valueToRemove) {
+    return array.filter(obj => {
+        for (const key in obj) {
+            if (obj[key] === valueToRemove) {
+                return false; // Exclude this object from the filtered array
+            }
+        }
+        return true; // Include all other objects
+    });
+}
+function generateRandomID() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    let randomID = '';
+    
+    for (let i = 0; i < 5; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        randomID += characters.charAt(randomIndex);
+    }
+    
+    return randomID;
+}

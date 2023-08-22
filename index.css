@@ -29,14 +29,15 @@ button:hover {
     cursor: pointer;
     background-color: #456830;
 }
-#delete-btn {
+#delete-all-btn {
     background: white;
     color: #5f9341;
 }
-#delete-btn:hover {
+#delete-all-btn:hover {
     background: #9c2727;
     color:white;
 }
+
 ul {
     margin-top: 20px;
     list-style: none;
@@ -44,9 +45,45 @@ ul {
 }
 
 li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 5px;
+
 }
 
 li a {
     color: #5f9341;
+
+}
+.confirmation-buttons {
+    display: inline-flex; 
+}
+
+.confirmation-btn {
+    padding: 2px 5px;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer; 
+    background-color: #5f9341;
+    margin-left: 5px;
+    border-radius: 3px;
+}
+
+.confirmation-btn:hover {
+    background-color: #5f9341;
+    border: none;
+}
+.delete-btn {
+    padding: 2px 5px;
+    background: none;
+    border: none;
+    border-radius: 3px;
+    background-color: #aa1b1b;
+    color: #fff;
+}
+
+.delete-btn:hover{
+    background-color: #d32222;
 }

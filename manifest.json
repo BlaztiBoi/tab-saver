@@ -1,12 +1,21 @@
 {
     "manifest_version": 3,
     "version": "1.0",
-    "name": "Tabs Saveer",
-    "description": "A Simple Extension That Let You Save Tabs",
-    "author" : "Blazt", 
+    "name": "Tabs Saver",
+    "description": "A Simple Extension That Lets You Save Tabs",
+    "author": "Blazt",
     "action": {
         "default_popup": "index.html",
-        "default_icon": "icon.png"
+        "default_icon": {
+            "16": "icon16.png",
+            "48": "icon48.png",
+            "128": "icon128.png"
+        }
+    },
+    "icons": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
     },
     "permissions": [
         "tabs"

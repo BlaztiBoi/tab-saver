@@ -33,7 +33,7 @@ inputBtn.addEventListener("click", function() {
 tabBtn.addEventListener("click", function(){    
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
         let save = {
-            note: shortenURL(tabs[0].url,50),
+            note: shortenURL(tabs[0].title,50),
             url : tabs[0].url,
             id : generateRandomID()
         }
@@ -107,7 +107,7 @@ deleteButtons.forEach(button => {
             deleteCancel.remove();
             button.style.display = 'block';
         });
-        
+
         listBtns.appendChild(deleteCancel);
         listBtns.appendChild(deleteConfirm);
 

@@ -62,7 +62,7 @@ function render(Saves) {
                     ${Saves[i].note }
                 </a>
                 <div class="confirmation-buttons">
-                <button class="delete-btn">✖</button>
+                <button class="delete-btn" title="Delete this saved tab">✖</button>
                 </div>
             </li>
         `
@@ -89,8 +89,11 @@ deleteButtons.forEach(button => {
 
         deleteConfirm.classList.add('confirmation-btn');
         deleteConfirm.textContent = '✔';
+        deleteConfirm.title = "Yes Delete it"
         deleteCancel.classList.add('confirmation-btn');
         deleteCancel.textContent = '✖';
+        deleteCancel.title = "No I changed my mind"
+
 
         deleteConfirm.addEventListener('click', () => {
             listBtns.remove();
@@ -104,9 +107,10 @@ deleteButtons.forEach(button => {
             deleteCancel.remove();
             button.style.display = 'block';
         });
-
-        listBtns.appendChild(deleteConfirm);
+        
         listBtns.appendChild(deleteCancel);
+        listBtns.appendChild(deleteConfirm);
+
 
         button.style.display = 'none';
         console.log(mySaves)
